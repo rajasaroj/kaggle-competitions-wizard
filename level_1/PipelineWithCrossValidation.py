@@ -10,13 +10,11 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
-from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score
 
 features = ['Survived', 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
 
-X_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\train.csv")
-X_TEST_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\test.csv")
+X_FULL = pd.read_csv(r"/resources/data/titanic/train.csv")
+X_TEST_FULL = pd.read_csv(r"/resources/data/titanic/test.csv")
 X_FULL = X_FULL.dropna(subset=['Survived'], axis=0)
 Y = X_FULL.Survived
 X_FULL = X_FULL[features[1:]]
@@ -50,27 +48,49 @@ preprocessor = ColumnTransformer(
     ]
 )
 
-my_model_1 = XGBClassifier(eval_metric='logloss', random_state=0)
-my_model_2 = XGBClassifier(eval_metric='logloss', n_estimators=500, learning_rate=0.01, random_state=0)
-my_model_3 = XGBClassifier(n_estimators=10000, max_depth=20, learning_rate=0.01, eval_metric='logloss', random_state=0)
+model_7 = RandomForestRegressor(n_estimators=100, criterion='absolute_error', max_depth=10,
+                                min_samples_split=10, random_state=0)
 
+
+# Bundle Preprocessing and modeling in a pipeline
 def mae_without_cross_validation():
-
     clf = Pipeline(steps=[
         ('preprocessor', preprocessor),
-        ('model', my_model_3)
+        ('model', model_7)
     ])
 
     clf.fit(x_train, y_train)
     pred = clf.predict(x_valid)
 
-    print('MAE without cross validation:', accuracy_score(y_valid, pred))
+    print('MAE without cross validation:', mean_absolute_error(y_valid, pred))
+    # Answer MAE: 0.20083798882681567
 
-    # Classifiers Accuracy
-    # my_model_1 = 0.8491620111731844
-    # my_model_2 = 0.8547486033519553
-    # my_model_3 = 0.8603351955307262
 
 mae_without_cross_validation()
 
-# 86% Accuracy Achieved
+
+
+
+
+# def mae_with_cross_validation(X_FULL, Y, n_estimator):
+#
+#     model = RandomForestRegressor(n_estimators=n_estimator, criterion='absolute_error', max_depth=10,
+#                                     min_samples_split=10, random_state=0)
+#     my_pipeline = Pipeline(steps=[
+#         ('preprocessor', preprocessor),
+#         ('model', model)
+#     ])
+#
+#     # Multiply by -1 since sklearn calculates *negative* MAE
+#     scores = -1 * cross_val_score(my_pipeline, X_FULL, Y,
+#                                   cv=5,
+#                                   scoring='neg_mean_absolute_error')
+#
+#     print("Average MAE score:", scores.mean())
+#     return scores.mean()
+#
+#
+# results = {x: mae_with_cross_validation(X_FULL, Y, x) for x in range(50, 450, 50)}
+# plt.plot(list(results.keys()), list(results.values()))
+# plt.show()
+

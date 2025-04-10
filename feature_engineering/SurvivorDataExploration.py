@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-X_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\train.csv")
-X_TEST_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\test.csv")
+X_FULL = pd.read_csv(r"/resources/data/titanic/train.csv")
+X_TEST_FULL = pd.read_csv(r"/resources/data/titanic/test.csv")
 
 print(X_FULL.columns)
 

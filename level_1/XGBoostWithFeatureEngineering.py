@@ -8,9 +8,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBClassifier
 
-baseline = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\gender_submission.csv")
-X_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\train.csv")
-X_TEST_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\test.csv")
+baseline = pd.read_csv(r"/resources/data/titanic/gender_submission.csv")
+X_FULL = pd.read_csv(r"/resources/data/titanic/train.csv")
+X_TEST_FULL = pd.read_csv(r"/resources/data/titanic/test.csv")
 X_FULL = X_FULL.dropna(subset=['Survived'], axis=0)
 Y = X_FULL.Survived
 

@@ -11,8 +11,8 @@ from sklearn.metrics import mean_absolute_error
 
 features = ['Survived','Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
 
-X_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\train.csv")
-X_TEST_FULL = pd.read_csv(r"C:\Users\Home\pythonProject\kaggle\TitanicSurvivor\resources\data\titanic\test.csv")
+X_FULL = pd.read_csv(r"/resources/data/titanic/train.csv")
+X_TEST_FULL = pd.read_csv(r"/resources/data/titanic/test.csv")
 X_FULL = X_FULL.dropna(subset=['Survived'], axis=0)
 Y = X_FULL.Survived
 X_FULL = X_FULL[features[1:]]
