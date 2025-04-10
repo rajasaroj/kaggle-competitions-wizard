@@ -6,7 +6,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
+
 
 baseline = pd.read_csv(r"../resources/data/titanic/gender_submission.csv")
 
@@ -50,20 +51,20 @@ preprocessor = ColumnTransformer(
 )
 
 # Create Model
-my_model = XGBClassifier(n_estimators=500, max_depth=5, learning_rate=0.05, eval_metric='logloss', random_state=0)
+rf_model = RandomForestClassifier(random_state=0)
 
 # Create Pipeline
 pipeline = Pipeline(steps=[
     ('preprocessor', preprocessor),
-    ('model', my_model)
+    ('model', rf_model)
 ])
 
 # Create GridCV Search Params
 param_grid = {
-    'model__n_estimators': [100, 600],
-    'model__max_depth': [3, 5, 7],
-    'model__learning_rate': [0.01, 0.05, 0.1],
-    'model__subsample': [0.8, 1.0]
+    'model__n_estimators': [100, 200, 300],
+    'model__max_depth': [5, 10, None],
+    'model__min_samples_split': [2,5,10],
+    'model__max_features': ['sqrt', 'log2']
 }
 
 grid_search = GridSearchCV(pipeline, param_grid, cv=5, scoring='accuracy', verbose=1,
@@ -74,8 +75,6 @@ print('Best Param: ', grid_search.best_params_)
 print('Best Estimator: ', grid_search.best_estimator_)
 print('Best Train Score: ', grid_search.best_score_)
 
-
-# Best Train Score:  0.9764358797313413
 
 def compare_accuracy_with_gender_submission(test_preds):
     # Your predictions DataFrame
@@ -91,11 +90,22 @@ def compare_accuracy_with_gender_submission(test_preds):
     print(f"Agreement with gender_submission.csv: {accuracy_vs_baseline:.4f}")
 
 
-best_model = grid_search.best_estimator_
-test_preds = best_model.predict(X_TEST_FULL)
+rf_best_model = grid_search.best_estimator_
+test_preds = rf_best_model.predict(X_TEST_FULL)
 
 compare_accuracy_with_gender_submission(test_preds)
 
 # Results:
-# Best Train Score:  0.8440210909547423
-# Agreement with gender_submission.csv: 0.8612
+# Best Train Score:  0.8327788588286987
+# Agreement with gender_submission.csv: 0.8947
+
+def write_to_file(test_preds):
+    submission = pd.DataFrame({
+        'PassengerId': X_TEST_FULL['PassengerId'],
+        'Survived': test_preds
+    })
+
+    submission.to_csv('submission.csv', index=False)
+    print("submission.csv created ✅")
+
+write_to_file(test_preds.astype(int))
