@@ -6,6 +6,8 @@ from ModelRepo import MyModel
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.impute import SimpleImputer
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error
 
 features = ['Survived','Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
 
@@ -57,9 +59,16 @@ x_train_imp_oh.columns = x_train_imp_oh.columns.astype(str)
 x_valid_imp_oh.columns = x_valid_imp_oh.columns.astype(str)
 
 
-my_model = MyModel()
-my_model.score_and_evaluate(x_train_imp_oh, y_train, x_valid_imp_oh, y_valid)
+# my_model = MyModel()
+# my_model.score_and_evaluate(x_train_imp_oh, y_train, x_valid_imp_oh, y_valid)
 
+model_7 = RandomForestRegressor(n_estimators=100, criterion='absolute_error', max_depth=10,
+                                             min_samples_split=10, random_state=0)
+
+model_7.fit(x_train_imp_oh, y_train)
+pred = model_7.predict(x_valid_imp_oh)
+
+print('MAE:', mean_absolute_error(y_valid, pred))
 
 # model_7 mae=0.20237430167597767
 # model_1 mae=0.2122491764269615
